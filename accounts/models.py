@@ -51,14 +51,23 @@ class UserModel(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
-#def validate_mobile(phone:str):
-#    if len(phone) != 11:
-#        raise ValueError ("phone must be 11 char")
+def validate_mobile(phone:str):
+    if len(phone) != 11:
+        raise ValueError ("phone must be 11 char")
+    if not phone.isdigit():
+        raise ValueError ("phone must be number")
+    if not phone.startswith("09"):
+        raise ValueError ("phone must start with 09")
 
-#import uuid#
+def validate_idcode(id_code:str):
+    if len(id_code) != 10:
+        raise ValueError ("id_code must be 11 char")
+    if not id_code.isdigit():
+        raise ValueError("id_code must be number")
 
-#class UserProfile(models.Model):
-#    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-#    phone = models.CharField(max_length=11, unique=True, default=uuid.UUID)
-#    id_code = models.CharField(max_length=10, unique=True, default=uuid.UUID)
-#    image = models.ImageField(upload_to="profile/", null=True, blank=True)
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=11, null=True, blank=True, validators=[validate_mobile])
+    id_code = models.CharField(max_length=10, null=True, blank=True, validators=[validate_idcode])
+    image = models.ImageField(upload_to="profile/", null=True, blank=True)
